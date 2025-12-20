@@ -1,0 +1,108 @@
+{% load static %}
+{% block content %}
+{% include 'admin/menu.html' %}
+
+        <!-- partial -->
+       <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <nav aria-label="breadcrumb">
+               
+              </nav>
+            </div>
+            <div class="row">
+          
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Booking Details</h4><br>
+                    <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Route Detail</th>
+                                <th>Booked Customer Name</th>
+                                <th>Total Passengers</th>
+                                <th>Total Amount</th>
+                                <th>Booking status</th>
+                                <th>Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td>
+                                    {% if booking.flight_cancelled %}
+                                    {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }} <br>
+                                        <span class="text-danger">Flight Cancelled </span>
+                                    {% else %}
+                                        {% if booking.routeassign.route.stop != 'Direct' %}
+                                        {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }} via {{booking.routeassign.route.stop}}
+                                        {% else %}
+                                        {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }}
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td>{{ booking.customer.fname }}</td>
+                                <td>{{ booking.total_traveller_no }}</td>
+                                <td>{{ booking.total_amount }}</td>
+                                <td>{{ booking.status }}</td>
+                                <td>
+                                    {% if booking.flight_cancelled or booking.status == 'Cancelled' %}
+                                        <!-- Show a message or an alternative action for cancelled flights -->
+                                        N/A
+                                    {% else %}
+                                        {% if booking.has_all_passengers %}
+                                            {% if booking.has_payment %}
+                                                <a class="btn btn-primary" href="view_ticket_admin/{{booking.id}}">View Ticket Details</a>
+                                            {% else %}
+                                               <p>Payment Not Completed</p>
+                                            {% endif %}
+                                        {% else %}
+                                            <p>Passengers List Not Updated</p>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+                </div>
+              </div>
+              </div>
+         
+            </div>
+          </div>
+		  </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:../../partials/_footer.html -->
+          <footer class="footer">
+            <div class="container-fluid d-flex justify-content-between">
+              <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
+              <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
+            </div>
+          </footer>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="{% static 'admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'admin/js/off-canvas.js' %}"></script>
+    <script src="{% static 'admin/js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'admin/js/misc.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <!-- End custom js for this page -->
+  {% endblock %}
+  </body>
+</html>

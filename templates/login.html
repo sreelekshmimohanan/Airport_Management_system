@@ -1,0 +1,66 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                       Login 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Login</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-6">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <form class="form-area contact-form text-right" action="addlogin" method="post">
+                        {% csrf_token %}
+                        <div class="row"> 
+                            <div class="col-lg-6 form-group">
+                            
+                                <input name="email" placeholder="Enter email address" class="common-input mb-20 form-control" required type="email">
+                            
+                            </div>
+                            <div class="col-lg-6 form-group">
+                               <input name="password" placeholder="Enter password" class="common-input mb-20 form-control" required type="password">                    
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="alert-msg" style="text-align: left;"></div>
+                                <button class="genric-btn primary"  type="submit">Login</button>                                         
+                            </div>
+                            
+                        </div>
+                    </form>
+               
+                </div>
+                <div class="col-lg-6">
+                    <img class="img-fluid" src="{% static 'img/about/info-img.jpg' %}" alt="">
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

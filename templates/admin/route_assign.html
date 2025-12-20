@@ -1,0 +1,187 @@
+
+{% load static %}
+{% block content %}
+{% include 'admin/menu.html' %}
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+
+    
+            <div class="col-10">
+                <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Flight Route Details</h4><br><br>
+                    <form class="form-sample" method="post" action="route_assign">
+                    {% csrf_token %}
+                    <!--<p class="card-description"> Personal info </p>-->
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Select Flight </label>
+                            <div class="col-sm-9">
+                            <select name="flight_id" class="form-control" required id="">
+                                <option value="">select</option>
+                                {% for flight in flights %}
+                                <option value="{{flight.id}}">{{flight.flight_name}} ({{flight.flight_model}})</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Select Route</label>
+                            <div class="col-sm-9">
+                                <select name="route_id" class="form-control" required id="">
+                                    <option value="">select</option>
+                                    {% for route in routes %}
+                                    {% if route.stop != 'Direct' %}
+                                    <option value="{{route.id}}">{{route.starting_point}} to {{route.destination}} via {{route.stop}} </option>
+                                    {% else %}
+                                    <option value="{{route.id}}">{{route.starting_point}} to {{route.destination}} </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>                         
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Departure Date</label>
+                            <div class="col-sm-9">
+                            <input type="date" required class="form-control" name="departure_date" required/>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Arrival Date</label>
+                            <div class="col-sm-9">
+                            <input type="date" required class="form-control" name="arrival_date" required/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Departure Time</label>
+                            <div class="col-sm-9">
+                            <input type="time" required class="form-control" name="departure_time" required/>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Arrival Time</label>
+                            <div class="col-sm-9">
+                            <input type="time" required class="form-control" name="arrival_time" required/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">First Class Rate</label>
+                            <div class="col-sm-9">
+                            <input type="number" required class="form-control" name="first_class_rate" required/>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Business Class Rate</label>
+                            <div class="col-sm-9">
+                            <input type="number" required class="form-control" name="business_class_rate" required/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Normal Class Rate</label>
+                            <div class="col-sm-9">
+                            <input type="number" required class="form-control" name="normal_class_rate" required/>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Infant Rate</label>
+                            <div class="col-sm-9">
+                            <input type="number" required class="form-control" name="infant_rate" required/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    
+                       
+                        
+                        <div class="row">
+                        <div class="col-sm-10">
+                            <center><button type="submit"  required class="btn btn-gradient-primary me-2">Submit</button></input></center>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <footer class="footer">
+            <div class="container-fluid d-flex justify-content-between">
+            <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
+            <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
+            </div>
+        </footer>
+        <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="{% static 'admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{% static 'admin/vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.cookie.js' %}" type="text/javascript"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'admin/js/off-canvas.js' %}"></script>
+    <script src="{% static 'admin/js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'admin/js/misc.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{% static 'admin/js/dashboard.js' %}"></script>
+    <script src="{% static 'admin/js/todolist.js' %}"></script>
+    <!-- End custom js for this page -->
+{% endblock %}
+</body>
+</html>

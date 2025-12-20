@@ -1,0 +1,215 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+<style>
+        
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .invoice {
+        width: 90%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .invoice h2 {
+        margin: 0;
+        padding: 0;
+    }
+    .invoice .header {
+    display: flex;
+    justify-content: center; /* Center-align the content horizontally */
+    align-items: center; /* Center-align the content vertically */
+    flex-direction: column; /* Stack the content vertically */
+    margin-bottom: 20px;
+    }
+    .invoice .left {
+        flex: 2;
+        align-items: center;
+    }
+    .invoice .right {
+        flex: 1;
+        text-align: right;
+    }
+    .invoice .details {
+        margin-bottom: 20px;
+    }
+    .invoice .details p {
+        margin: 5px 0;
+    }
+    .invoice .items {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .invoice .items th,
+    .invoice .items td {
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+    .invoice .items th {
+        background-color: #f4f4f4;
+    }
+    .invoice .total {
+        margin-top: 20px;
+        text-align: right;
+    }
+</style>
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                       Ticket Details 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Ticket Details</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+	<!-- Start destinations Area -->
+    <section class="destinations-area section-gap">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                
+            </div>	
+            <input type="button" id="btnExport" class="btn btn-primary" value="Download Ticket" onclick="Export()" />
+
+            <div class="invoice" id="tblCustomers">
+                <div class="header">
+                 <div class="">
+                       <h2> Travelista Airlines</h2> <br>
+                    </div>
+                    <h1>Ticket Details</h1>
+                      
+                 
+                  
+                </div>
+                <table class="items">
+                    <tr>
+                        <th colspan="2"><strong>Flight :</strong> {{ booking.routeassign.flight.flight_name }} ({{ booking.routeassign.flight.flight_model }})</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="details">
+                                <p><strong style="color: black;">Name:</strong> {{ booking.customer.fname }}</p>
+                                <p><strong style="color: black;">Phone: </strong>{{booking.customer.phone}}</p>
+                                <p><strong style="color: black;">Place:</strong> {{booking.customer.street}},{{booking.customer.district}}</p>
+                            </div>
+               
+                        </td>
+                         <td>
+                            <div class="details">
+                                <p><strong style="color: black;">Booking Id:</strong> <b>{{ booking.id }}</b></p>
+                                <p><strong style="color: black;">Total Passengers:</strong> <b>{{ booking.total_traveller_no }}</b></p>
+                                <p><strong style="color: black;">Distance/Travel Time:</strong> {{ booking.routeassign.route.distance }}</p>
+                            </div>
+                         </td>
+                    </tr>
+                </table>
+                <table class="items">
+                    <tr>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                    </tr>
+                    <tr>
+                        {% if booking.routeassign.route.stop != 'Direct' %}
+                        <td><strong style="color: black;">From:</strong> {{ booking.routeassign.route.starting_point }} <strong style="color: black;">Via:</strong> {{ booking.routeassign.route.stop }}</td>
+                        {% else %}
+                        <td><strong style="color: black;">From:</strong> {{ booking.routeassign.route.starting_point }}</td>
+                        {% endif %}
+                        <td> <strong style="color: black;">To :</strong>  {{ booking.routeassign.route.destination }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: black;">Departure Date:</strong> {{ booking.routeassign.departure_date }}</td>
+                        <td><strong style="color: black;">Arrival Date:</strong> {{ booking.routeassign.arrival_date }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color: black;">Departure Time:</strong> {{ booking.routeassign.departure_time }}</td>
+                        <td><strong style="color: black;">Arrival Time:</strong> {{ booking.routeassign.arrival_time }}</td>
+                    </tr>
+                </table>
+                <h4>Passenger Information</h4>
+                <table class="items">
+                    <thead>
+                        <tr>
+                            <th colspan="2">FUll Name</th>
+                            <th>Gender</th>
+                            <th>ID Proof No</th>
+                            <th>Baggage Allowance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for passenger in passengers %}
+                        <tr>
+                            <td colspan="2">{{ passenger.fname }} {{ passenger.lname }}</td>
+                            <td>{{ passenger.gender }}</td>
+                            <td>{{ passenger.idproof_no }}</td>
+                            <td>30kg</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="total">
+                    <p>Total Amount: ₹<b>{{ booking.total_amount }}</b></p>
+                </div>
+                <h6>Important information</h6>
+                <p>Passengers are required to bring this Itinerary/Receipt along with an official ID with photo issued by the government or known corporations upon entering the terminal. <br>
+                    The airline may contact the card holder or the passenger for verification of their payment, and in case the airline suspects or has a reason to believe that the ticket(s) purchased were made fraudulently, the airline
+                    may cancel the reservation made by the passenger.
+                    
+                </p>
+                <h6>Restricted Items or Goods                </h6>
+                <p>We reserve the right to confiscate any item or goods brought by the passenger which we believe might bring harm or threat to our guests, including the following:
+<br>
+                    1. Pointed or sharp objects
+                    <br>
+                    2. Firearms and Ammunition
+                    <br>
+                    3. Explosives or flammable substances
+                    <br>
+                    4. Toys representing dangerous objects such as toy guns and knives
+                    <br>
+                    5. Aerosols
+                    <br>
+                    6. Any other items which may be considered security hazards by law
+                    
+                    </p>
+            </div>					
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+            <script type="text/javascript">
+                function Export() {
+                    html2canvas(document.getElementById('tblCustomers'), {
+                        onrendered: function (canvas) {
+                            var data = canvas.toDataURL();
+                            var docDefinition = {
+                                content: [{
+                                    image: data,
+                                    width: 500
+                                }]
+                            };
+                            pdfMake.createPdf(docDefinition).download("Airline Ticket.pdf");
+                        }
+                    });
+                }
+            </script>
+                																													
+            </div>
+        </div>	
+    </section>
+    <!-- End destinations Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

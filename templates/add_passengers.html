@@ -1,0 +1,75 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                      Customer Register 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Register</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-8">
+                    
+                    <form class="form-area contact-form text-right" action="add_passengers/{{booking_master.id}}" method="post">
+                        {% csrf_token %}
+                        <div class="row"> 
+                            <div class="col-lg-6 form-group">
+                            
+                               
+                    
+                                <input name="fname"    placeholder="First Name" class="common-input mb-20 form-control" required type="text">
+                                <input name="idproof_no"    placeholder="Any ID-Proof Number" class="common-input mb-20 form-control" required type="text">
+                
+                    
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <input name="lname" min="0" placeholder="Last Name" class="common-input mb-20 form-control" required type="text">
+                                <select name="gender" class="common-input mb-20 form-control" required>
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female </option>
+                                    <option value="Other">Other</option>
+                                </select>
+                               
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="alert-msg" style="text-align: left;"></div>
+                                <button class="genric-btn primary" style="float: right;" type="submit">Register</button>                                         
+                            </div>
+                            
+                        </div>
+                    </form>
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        font-weight: 500;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                     Your Bookings 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Register</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-12">
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Route Detail</th>
+                                <th>Total Passengers</th>
+                                <th>Total Amount</th>
+                                <th>Booking Status</th>
+                                <th colspan="2">Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td>
+                                    {% if booking.flight_cancelled %}
+                                    {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }} <br>
+                                        <span class="text-danger">Flight Cancelled Due to some Issues.Kindly Book Another One <br>(Your Payment Will be refund within 24 hrs)</span>
+                                    {% else %}
+                                        {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ booking.total_traveller_no }}</td>
+                                <td>{{ booking.total_amount }}</td>
+                                <td>{{ booking.status }}</td>
+                                {% if booking.status == 'Booked' %}
+                                <td><a href="cancel_booking/{{booking.id}}" class="btn btn-primary">Cancel Booking</a></td>
+                                {% endif %}
+
+
+                                <td>
+                                    {% if booking.flight_cancelled or booking.status == 'Cancelled' %}
+                                        <!-- Show a message or an alternative action for cancelled flights -->
+                                        N/A
+                                    {% else %}
+                                        {% if booking.has_all_passengers %}
+                                            {% if booking.has_payment %}
+                                                <a class="btn btn-primary" href="view_ticket/{{booking.id}}">View Ticket</a>
+                                            {% else %}
+                                                <a class="btn btn-success" href="booking_payment/{{booking.id}}">Payment</a>
+                                            {% endif %}
+                                        {% else %}
+                                            <a class="btn btn-primary" href="add_passengers/{{booking.id}}">Add Passenger Details</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+{% if message %}
+<script>
+    alert('{{ message }}');
+</script>
+{% endif %}
+
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                       FLight Details 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Flight Details</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+	<!-- Start destinations Area -->
+    <section class="destinations-area section-gap">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="menu-content pb-40 col-lg-8">
+                    <div class="title text-center">
+                        <h1 class="mb-10">Flight Details</h1>
+                    </div>
+                </div>
+            </div>	
+            <form class="form-area contact-form text-right" action="search" method="post">
+                {% csrf_token %}
+                <div class="row"> 
+                    <div class="col-lg-4 form-group">
+                        <input name="starting_point"    placeholder="From" class="common-input mb-20 form-control" required type="text">
+                    </div>
+                    <div class="col-lg-4 form-group">
+                        <input name="destination"    placeholder="To" class="common-input mb-20 form-control" required type="text">
+                    </div>
+                    <div class="col-lg-4 form-group">
+                        <input name="date"    placeholder="First Name" class="common-input mb-20 form-control" required type="date">
+                        <button class="genric-btn primary" style="float: right;" type="submit">Search Flight</button>  
+
+                    </div>
+                </div>
+            </form>					
+            <div class="row">
+                {% if not result %}
+                <h2>No Flights Found</h2>
+                {% else %}
+                {% for assignment in result %}
+                <div class="col-lg-4">
+                    <div class="single-destinations">
+                        <div class="details">
+                            <h4>{{ assignment.flight.flight_name }} ({{ assignment.flight.flight_model }})</h4>
+                            <p style="color: rgb(3, 177, 3);">
+                                {% if assignment.route.stop != 'Direct' %}
+                                {{ assignment.route.starting_point }} <b>To</b> <br> {{ assignment.route.destination }}<b>Via</b> <br> {{ assignment.route.stop }}
+                                {% else %}
+                                {{ assignment.route.starting_point }} <b>To</b> <br> {{ assignment.route.destination }}
+                                {% endif %}
+                            </p>
+                            <p><b>{{ assignment.route.distance }}</b></p>
+                            <ul class="package-list">
+                                <!-- <li class="d-flex justify-content-between align-items-center">
+                                    <span>Duration</span>
+                                    <span>06 days and 7 nights</span>
+                                </li> -->
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Departure</span>
+                                    <span>{{ assignment.departure_date }} {{ assignment.departure_time }}</span>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Arrival</span>
+                                    <span>{{ assignment.arrival_date }} {{ assignment.arrival_time }}</span>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Extras</span>
+                                    <span>All Inclusive</span>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>First Class:</span>
+                                    <a  class="price-btn">₹{{ assignment.first_class_rate }}</a>
+                                </li>	
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Business Class:</span>
+                                    <a class="price-btn">₹{{ assignment.business_class_rate }}</a>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Normal Rate:</span>
+                                    <a class="price-btn">₹{{ assignment.normal_class_rate }}</a>
+                                </li>
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>Infant Rate:</span>
+                                    <a  class="price-btn">₹{{ assignment.infant_rate }}</a>
+                                </li>	
+                                <a href="bookflight/{{assignment.id}}" class="btn btn-primary">Book Now</a>												
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                		{% endif %}																											
+            </div>
+        </div>	
+    </section>
+    <!-- End destinations Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

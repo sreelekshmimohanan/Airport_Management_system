@@ -1,0 +1,77 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                      Booking Payment
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Payment</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-8">
+                    
+                    <form class="form-area contact-form text-right" action="booking_payment/{{result.id}}" method="post">
+                        {% csrf_token %}
+                        <div class="row"> 
+                            <div class="col-lg-6 form-group">
+                            
+                               
+                    
+                                <input name="payment_amt"    placeholder="" value="{{result.total_amount}}" class="common-input mb-20 form-control" readonly required type="text">
+                                <input name="card_no" pattern="[0-9]{16}" title="Enter 16 Digits" placeholder="Card Number" class="common-input mb-20 form-control" required type="text">
+                                <input name="cvv" pattern="[0-9]{3}" title="Enter 3 Digits" placeholder="Card CVV" class="common-input mb-20 form-control" required type="text">
+
+                
+                    
+                            </div>
+                            <div class="col-lg-6 form-group">
+                                <input name="card_name"    placeholder="Card Name" class="common-input mb-20 form-control" required type="text">
+
+                                <select name="card_type" class="common-input mb-20 form-control" required>
+                                    <option value="" disabled selected>Select Card Type</option>
+                                    <option value="Male">Debit</option>
+                                    <option value="Female">Credit </option>
+                                </select>
+                               
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="alert-msg" style="text-align: left;"></div>
+                                <button class="genric-btn primary" style="float: right;" type="submit">Pay</button>                                         
+                            </div>
+                            
+                        </div>
+                    </form>
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}
