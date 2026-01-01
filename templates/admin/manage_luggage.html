@@ -1,0 +1,107 @@
+{% load static %}
+{% block content %}
+{% include 'admin/menu.html' %}
+{% if message %}
+<script>
+    alert('{{message}}');
+</script>
+{% endif %}
+      <!-- partial -->
+
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                  <i class="mdi mdi-home"></i>
+                </span> Manage Luggage Details
+              </h3>
+              <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item active" aria-current="page">
+                    <!--<span></span>Overview<i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>-->
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Luggage List</h4>
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Booking ID</th>
+                            <th>Number of Baggage</th>
+                            <th>Total Weight (kg)</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Update Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for luggage in luggages %}
+                          <tr>
+                            <td>{{ luggage.bookingmaster.id }}</td>
+                            <td>{{ luggage.num_baggage }}</td>
+                            <td>{{ luggage.total_weight }}</td>
+                            <td>{{ luggage.description }}</td>
+                            <td>{{ luggage.status }}</td>
+                            <td>
+                              <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="luggage_id" value="{{ luggage.id }}">
+                                <select name="status" class="form-control" style="width: auto; display: inline-block;">
+                                  <option value="Checked-In" {% if luggage.status == 'Checked-In' %}selected{% endif %}>Checked-In</option>
+                                  <option value="Loaded" {% if luggage.status == 'Loaded' %}selected{% endif %}>Loaded</option>
+                                  <option value="Unloaded" {% if luggage.status == 'Unloaded' %}selected{% endif %}>Unloaded</option>
+                                  <option value="Out for Pick Up" {% if luggage.status == 'Out for Pick Up' %}selected{% endif %}>Out for Pick Up</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                              </form>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <footer class="footer">
+            <div class="container-fluid d-flex justify-content-between">
+              <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © Airline 2024</span>
+              <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> </span>
+            </div>
+          </footer>
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="{% static 'admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{% static 'admin/vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.cookie.js' %}" type="text/javascript"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'admin/js/off-canvas.js' %}"></script>
+    <script src="{% static 'admin/js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'admin/js/misc.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{% static 'admin/js/dashboard.js' %}"></script>
+    <script src="{% static 'admin/js/todolist.js' %}"></script>
+    <!-- End custom js for this page -->
+  {% endblock %}

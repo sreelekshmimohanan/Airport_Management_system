@@ -15,9 +15,9 @@
             <div class="row d-flex align-items-center justify-content-center">
                 <div class="about-content col-lg-12">
                     <h1 class="text-white">
-                      Customer Register 	
+                      Add Passengers 	
                     </h1>	
-                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Register</a></p>
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Add Passengers</a></p>
                 </div>	
             </div>
         </div>
@@ -34,33 +34,28 @@
                     
                     <form class="form-area contact-form text-right" action="add_passengers/{{booking_master.id}}" method="post">
                         {% csrf_token %}
-                        <div class="row"> 
+                        {% for _ in remaining_list %}
+                        <div class="row passenger-section" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+                            <h4>Passenger {{ forloop.counter }}</h4>
                             <div class="col-lg-6 form-group">
-                            
-                               
-                    
-                                <input name="fname"    placeholder="First Name" class="common-input mb-20 form-control" required type="text">
-                                <input name="idproof_no"    placeholder="Any ID-Proof Number" class="common-input mb-20 form-control" required type="text">
-                
-                    
+                                <input name="fname" placeholder="First Name" class="common-input mb-20 form-control" required type="text">
+                                <input name="idproof_no" placeholder="Any ID-Proof Number" class="common-input mb-20 form-control" required type="text">
                             </div>
                             <div class="col-lg-6 form-group">
-                                <input name="lname" min="0" placeholder="Last Name" class="common-input mb-20 form-control" required type="text">
+                                <input name="lname" placeholder="Last Name" class="common-input mb-20 form-control" required type="text">
                                 <select name="gender" class="common-input mb-20 form-control" required>
                                     <option value="" disabled selected>Select Gender</option>
                                     <option value="Male">Male</option>
-                                    <option value="Female">Female </option>
+                                    <option value="Female">Female</option>
                                     <option value="Other">Other</option>
                                 </select>
-                               
                             </div>
-                            <div class="col-lg-12">
-                                <div class="alert-msg" style="text-align: left;"></div>
-                                <button class="genric-btn primary" style="float: right;" type="submit">Register</button>                                         
-                            </div>
-                            
                         </div>
-                    </form>
+                        {% endfor %}
+                        <div class="col-lg-12">
+                            <div class="alert-msg" style="text-align: left;"></div>
+                            <button class="genric-btn primary" style="float: right;" type="submit">Add Passengers</button>                                         
+                        </div>
                
                 </div>
             </div>

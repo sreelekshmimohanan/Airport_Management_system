@@ -1,0 +1,95 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                      Booking Weather Details 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Weather Details</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-8">
+                    
+                    <h3>Weather for Booking ID: {{ booking.id }}</h3>
+                    <p><strong>Route:</strong> {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Starting Point: {{ booking.routeassign.route.starting_point }}</h4>
+                            {% if start_weather %}
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Condition</th>
+                                    <td>{{ start_weather.condition }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Temperature</th>
+                                    <td>{{ start_weather.temperature }} °C</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Updated</th>
+                                    <td>{{ start_weather.updated_at }}</td>
+                                </tr>
+                            </table>
+                            {% else %}
+                            <p>No weather data available for this location.</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Destination: {{ booking.routeassign.route.destination }}</h4>
+                            {% if dest_weather %}
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Condition</th>
+                                    <td>{{ dest_weather.condition }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Temperature</th>
+                                    <td>{{ dest_weather.temperature }} °C</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Updated</th>
+                                    <td>{{ dest_weather.updated_at }}</td>
+                                </tr>
+                            </table>
+                            {% else %}
+                            <p>No weather data available for this location.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'my_booking' %}" class="btn btn-primary">Back to My Bookings</a>
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

@@ -83,3 +83,22 @@ class tbl_payment(models.Model):
     card_type = models.CharField(max_length=150)
     cvv = models.CharField(max_length=150)
     status = models.CharField(max_length=150)
+
+class tbl_luggage(models.Model):
+    bookingmaster = models.ForeignKey(tbl_bookingmaster, on_delete=models.CASCADE)
+    num_baggage = models.IntegerField()
+    total_weight = models.DecimalField(max_digits=5, decimal_places=2)
+    description = models.TextField()
+    status = models.CharField(max_length=150, default='Added')
+
+class tbl_weather(models.Model):
+    location = models.CharField(max_length=150)
+    condition = models.CharField(max_length=150)
+    temperature = models.DecimalField(max_digits=5, decimal_places=2)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class tbl_feedback(models.Model):
+    bookingmaster = models.OneToOneField(tbl_bookingmaster, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # 1 to 5 stars
+    comments = models.TextField(blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)

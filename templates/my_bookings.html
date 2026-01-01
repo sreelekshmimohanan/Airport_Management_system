@@ -57,7 +57,7 @@
                                 <th>Total Passengers</th>
                                 <th>Total Amount</th>
                                 <th>Booking Status</th>
-                                <th colspan="2">Manage</th>
+                                <th colspan="3">Manage</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,6 +77,9 @@
                                 {% if booking.status == 'Booked' %}
                                 <td><a href="cancel_booking/{{booking.id}}" class="btn btn-primary">Cancel Booking</a></td>
                                 {% endif %}
+                                {% if booking.status == 'Journey Completed' %}
+                                <td><a href="give_feedback/{{booking.id}}" class="btn btn-success">Give Feedback</a></td>
+                                {% endif %}
 
 
                                 <td>
@@ -87,6 +90,7 @@
                                         {% if booking.has_all_passengers %}
                                             {% if booking.has_payment %}
                                                 <a class="btn btn-primary" href="view_ticket/{{booking.id}}">View Ticket</a>
+                                                <br><a class="btn btn-info" href="view_booking_weather/{{booking.id}}" style="margin-top: 5px;">View Weather</a>
                                             {% else %}
                                                 <a class="btn btn-success" href="booking_payment/{{booking.id}}">Payment</a>
                                             {% endif %}

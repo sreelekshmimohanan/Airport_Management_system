@@ -1,0 +1,87 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                      Track Luggage 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Track Luggage</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-8">
+                    
+                    {% if not luggage %}
+                    <form class="form-area contact-form text-right" action="{% url 'track_luggage' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row"> 
+                            <div class="col-lg-6 form-group">
+                                <input name="booking_id" placeholder="Enter Booking ID" class="common-input mb-20 form-control" required type="number">
+                            </div>
+                            <div class="col-lg-12">
+                                {% if error %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                                {% endif %}
+                                <button class="genric-btn primary" style="float: right;" type="submit">Track</button>                                         
+                            </div>
+                        </div>
+                    </form>
+                    {% else %}
+                    <h3>Luggage Details</h3>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Booking ID</th>
+                            <td>{{ booking.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Number of Baggage</th>
+                            <td>{{ luggage.num_baggage }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Weight (kg)</th>
+                            <td>{{ luggage.total_weight }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ luggage.description }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>{{ luggage.status }}</td>
+                        </tr>
+                    </table>
+                    <a href="{% url 'track_luggage' %}" class="btn btn-primary">Track Another</a>
+                    {% endif %}
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}
