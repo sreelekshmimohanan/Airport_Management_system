@@ -1,0 +1,76 @@
+{% block content %}
+{% load static %}
+
+{% include 'header.html' %}
+
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+</script>
+{% endif %}
+	<!-- start banner Area -->
+    <section class="relative about-banner">	
+        <div class="overlay overlay-bg"></div>
+        <div class="container">				
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="about-content col-lg-12">
+                    <h1 class="text-white">
+                      Give Feedback 	
+                    </h1>	
+                    <p class="text-white link-nav"><a href="">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href=""> Feedback</a></p>
+                </div>	
+            </div>
+        </div>
+    </section>
+    <!-- End banner Area -->				  				  
+
+    <!-- Start contact-page Area -->
+    <section class="contact-page-area section-gap">
+    
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-lg-8">
+                    
+                    <h3>Feedback for Booking ID: {{ booking.id }}</h3>
+                    <p><strong>Route:</strong> {{ booking.routeassign.route.starting_point }} to {{ booking.routeassign.route.destination }}</p>
+                    
+                    {% if feedback %}
+                    <p>You have already submitted feedback. You can update it below.</p>
+                    {% endif %}
+                    
+                    <form class="form-area contact-form text-right" action="{% url 'give_feedback' booking.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="row"> 
+                            <div class="col-lg-6 form-group">
+                                <label for="rating">Rating (1-5 stars)</label>
+                                <select name="rating" class="common-input mb-20 form-control" required>
+                                    <option value="">Select Rating</option>
+                                    <option value="1" {% if feedback and feedback.rating == 1 %}selected{% endif %}>1 Star</option>
+                                    <option value="2" {% if feedback and feedback.rating == 2 %}selected{% endif %}>2 Stars</option>
+                                    <option value="3" {% if feedback and feedback.rating == 3 %}selected{% endif %}>3 Stars</option>
+                                    <option value="4" {% if feedback and feedback.rating == 4 %}selected{% endif %}>4 Stars</option>
+                                    <option value="5" {% if feedback and feedback.rating == 5 %}selected{% endif %}>5 Stars</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="comments">Comments</label>
+                                    <textarea name="comments" class="common-input mb-20 form-control" rows="4" placeholder="Share your experience...">{% if feedback %}{{ feedback.comments }}{% endif %}</textarea>
+                                </div>
+                                <button class="genric-btn primary" style="float: right;" type="submit">Submit Feedback</button>
+                            </div>
+                        </div>
+                    </form>
+               
+                </div>
+            </div>
+        </div>	
+        
+    </section>
+    <!-- End contact-page Area -->
+
+
+{% include 'footer.html' %}
+
+{% endblock %}

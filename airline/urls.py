@@ -66,9 +66,16 @@ urlpatterns = [
     path('view_ticket_admin/<int:id>',views.view_ticket_admin),
 
 
-    path('my_booking',views.my_booking),
+    path('my_booking',views.my_booking, name='my_booking'),
     path('search',views.search),
     path('view_bookings',views.view_bookings),
+    path('add_luggage', views.add_luggage, name='add_luggage'),
+    path('manage_luggage', views.manage_luggage, name='manage_luggage'),
+    path('track_luggage', views.track_luggage, name='track_luggage'),
+    path('manage_weather', views.manage_weather, name='manage_weather'),
+    path('view_booking_weather/<int:id>', views.view_booking_weather, name='view_booking_weather'),
+    path('give_feedback/<int:id>', views.give_feedback, name='give_feedback'),
+    path('view_feedbacks', views.view_feedbacks, name='view_feedbacks'),
 
 
 

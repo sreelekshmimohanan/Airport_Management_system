@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
 from datetime import date
+from django.core.mail import send_mail
+
 def first(request):
     return render(request,'index.html')
 
@@ -412,10 +414,10 @@ def cancel_booking(request, id):
 def add_passengers(request, id):
     if request.method == "POST":
         bookingmaster_id = id
-        fname = request.POST.get('fname')
-        lname = request.POST.get('lname')
-        gender = request.POST.get('gender')
-        idproof_no = request.POST.get('idproof_no')
+        fnames = request.POST.getlist('fname')
+        lnames = request.POST.getlist('lname')
+        genders = request.POST.getlist('gender')
+        idproof_nos = request.POST.getlist('idproof_no')
 
         # Retrieve the booking master instance
         booking_master = get_object_or_404(tbl_bookingmaster, pk=bookingmaster_id)
@@ -426,19 +428,25 @@ def add_passengers(request, id):
         # Get the total_traveller_no for the booking master and convert it to an integer
         total_traveller_no = int(booking_master.total_traveller_no)
 
-        # Check if adding the new passenger will exceed the total_traveller_no
-        if existing_passengers_count < total_traveller_no:
-            # If not, create and save the new passenger
-            passenger = tbl_bookingchild(bookingmaster=booking_master, fname=fname, lname=lname, gender=gender, idproof_no=idproof_no)
-            passenger.save()
-            return redirect(my_booking)
-        else:
-            # If yes, handle the error (for example, display a message or redirect to an error page)
-            return render(request, "index.html", {'message': 'Maximum number of passengers reached for this booking'})
+        # Loop through the submitted passengers
+        added_count = 0
+        for i in range(len(fnames)):
+            if existing_passengers_count + added_count < total_traveller_no:
+                passenger = tbl_bookingchild(bookingmaster=booking_master, fname=fnames[i], lname=lnames[i], gender=genders[i], idproof_no=idproof_nos[i])
+                passenger.save()
+                added_count += 1
+            else:
+                break
+
+        return redirect(my_booking)
 
     else:
         booking_master = get_object_or_404(tbl_bookingmaster, id=id)
-        return render(request, "add_passengers.html", {'booking_master': booking_master})
+        existing_passengers_count = tbl_bookingchild.objects.filter(bookingmaster_id=id).count()
+        total_traveller_no = int(booking_master.total_traveller_no)
+        remaining = total_traveller_no - existing_passengers_count
+        remaining_list = list(range(remaining))
+        return render(request, "add_passengers.html", {'booking_master': booking_master, 'remaining_list': remaining_list})
 
 
 def booking_payment(request,id):
@@ -454,6 +462,35 @@ def booking_payment(request,id):
 
         passenger = tbl_payment(bookingmaster=bookingmaster, payment_amt=payment_amt, card_no=card_no, card_name=card_name, card_type=card_type,cvv=cvv,status='Paid')
         passenger.save()
+
+        # Send email notification
+        customer_email = bookingmaster.customer.email
+        subject = 'Booking Confirmation'
+        passengers = tbl_bookingchild.objects.filter(bookingmaster=bookingmaster)
+        passenger_details = '\n'.join([f"{p.fname} {p.lname}, Gender: {p.gender}, ID: {p.idproof_no}" for p in passengers])
+        message = f"""
+Dear {bookingmaster.customer.fname},
+
+Your booking has been confirmed and payment processed successfully.
+
+Booking Details:
+- Booking ID: {bookingmaster.id}
+- Route: {bookingmaster.routeassign.route.starting_point} to {bookingmaster.routeassign.route.destination}
+- Flight: {bookingmaster.routeassign.flight.flight_name}
+- Departure Date: {bookingmaster.routeassign.departure_date}
+- Departure Time: {bookingmaster.routeassign.departure_time}
+- Total Amount Paid: {payment_amt}
+
+Passengers:
+{passenger_details}
+
+Thank you for choosing our service.
+
+Best regards,
+Airport Management System
+"""
+        send_mail(subject, message, 'sample@example.com', [customer_email])#replace with your EMAIL_HOST_USER
+
         return redirect(my_booking)
     else:
         assigns = tbl_bookingmaster.objects.get(id=id)
@@ -466,3 +503,129 @@ def view_ticket(request, id):
     passengers = tbl_bookingchild.objects.filter(bookingmaster=booking)
     
     return render(request, "view_ticket.html", {'booking': booking, 'passengers': passengers})
+
+def add_luggage(request):
+    if request.method == "POST":
+        booking_id = request.POST.get('booking_id')
+        num_baggage = request.POST.get('num_baggage')
+        total_weight = request.POST.get('total_weight')
+        description = request.POST.get('description')
+        try:
+            booking = tbl_bookingmaster.objects.get(id=booking_id)
+            # Check if payment is completed
+            if not tbl_payment.objects.filter(bookingmaster=booking, status='Paid').exists():
+                return render(request, "admin/add_luggage.html", {'error': 'Payment not completed for this booking.'})
+            luggage = tbl_luggage(bookingmaster=booking, num_baggage=num_baggage, total_weight=total_weight, description=description)
+            luggage.save()
+            # Update booking status to 'Boarded'
+            booking.status = 'Boarded'
+            booking.save()
+            return render(request, "admin/index.html", {'message': 'Luggage details added successfully and booking status updated to Boarded'})
+        except tbl_bookingmaster.DoesNotExist:
+            return render(request, "admin/add_luggage.html", {'error': 'Invalid Booking ID'})
+    else:
+        return render(request, "admin/add_luggage.html")
+
+def manage_luggage(request):
+    if request.method == "POST":
+        luggage_id = request.POST.get('luggage_id')
+        new_status = request.POST.get('status')
+        try:
+            luggage = tbl_luggage.objects.get(id=luggage_id)
+            luggage.status = new_status
+            luggage.save()
+            # If luggage status is 'Out for Pick Up', update booking status to 'Journey Completed'
+            if new_status == 'Out for Pick Up':
+                luggage.bookingmaster.status = 'Journey Completed'
+                luggage.bookingmaster.save()
+        except tbl_luggage.DoesNotExist:
+            pass
+    luggages = tbl_luggage.objects.select_related('bookingmaster').all()
+    return render(request, "admin/manage_luggage.html", {'luggages': luggages})
+
+def track_luggage(request):
+    if request.method == "POST":
+        booking_id = request.POST.get('booking_id')
+        customer_id = request.session.get('cuid')
+        if customer_id:
+            try:
+                booking = tbl_bookingmaster.objects.get(id=booking_id, customer_id=customer_id)
+                luggage = tbl_luggage.objects.filter(bookingmaster=booking).first()
+                if luggage:
+                    return render(request, "track_luggage.html", {'luggage': luggage, 'booking': booking})
+                else:
+                    return render(request, "track_luggage.html", {'error': 'No luggage found for this booking.'})
+            except tbl_bookingmaster.DoesNotExist:
+                return render(request, "track_luggage.html", {'error': 'Invalid Booking ID or booking does not belong to you.'})
+        else:
+            return redirect('login')
+    else:
+        return render(request, "track_luggage.html")
+
+def manage_weather(request):
+    if request.method == "POST":
+        location = request.POST.get('location')
+        condition = request.POST.get('condition')
+        temperature = request.POST.get('temperature')
+        weather, created = tbl_weather.objects.get_or_create(location=location, defaults={'condition': condition, 'temperature': temperature})
+        if not created:
+            weather.condition = condition
+            weather.temperature = temperature
+            weather.save()
+    # Get unique locations from routes
+    locations = set()
+    routes = tbl_route.objects.all()
+    for route in routes:
+        locations.add(route.starting_point)
+        locations.add(route.destination)
+    locations = sorted(list(locations))
+    weathers = {w.location: w for w in tbl_weather.objects.filter(location__in=locations)}
+    location_weather = [(loc, weathers.get(loc)) for loc in locations]
+    return render(request, "admin/manage_weather.html", {'location_weather': location_weather})
+
+def view_booking_weather(request, id):
+    customer_id = request.session.get('cuid')
+    if not customer_id:
+        return redirect('login')
+    try:
+        booking = tbl_bookingmaster.objects.get(id=id, customer_id=customer_id)
+    except tbl_bookingmaster.DoesNotExist:
+        return render(request, "index.html", {'message': 'Booking not found.'})
+    starting_point = booking.routeassign.route.starting_point
+    destination = booking.routeassign.route.destination
+    start_weather = tbl_weather.objects.filter(location=starting_point).first()
+    dest_weather = tbl_weather.objects.filter(location=destination).first()
+    return render(request, "view_booking_weather.html", {
+        'booking': booking,
+        'start_weather': start_weather,
+        'dest_weather': dest_weather
+    })
+
+def give_feedback(request, id):
+    customer_id = request.session.get('cuid')
+    if not customer_id:
+        return redirect('login')
+    try:
+        booking = tbl_bookingmaster.objects.get(id=id, customer_id=customer_id, status='Journey Completed')
+    except tbl_bookingmaster.DoesNotExist:
+        return render(request, "index.html", {'message': 'Feedback not available for this booking.'})
+    
+    if request.method == "POST":
+        rating = request.POST.get('rating')
+        comments = request.POST.get('comments')
+        feedback, created = tbl_feedback.objects.get_or_create(
+            bookingmaster=booking,
+            defaults={'rating': rating, 'comments': comments}
+        )
+        if not created:
+            feedback.rating = rating
+            feedback.comments = comments
+            feedback.save()
+        return redirect('my_booking')
+    else:
+        existing_feedback = tbl_feedback.objects.filter(bookingmaster=booking).first()
+        return render(request, "give_feedback.html", {'booking': booking, 'feedback': existing_feedback})
+
+def view_feedbacks(request):
+    feedbacks = tbl_feedback.objects.select_related('bookingmaster__customer', 'bookingmaster__routeassign__route').all()
+    return render(request, "admin/view_feedbacks.html", {'feedbacks': feedbacks})
